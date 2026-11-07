@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#142c49"><link rel="manifest" href="manifest.webmanifest">
+<title>Scout DNA Vôlei</title>
+<style>
+:root{--navy:#142c49;--blue:#204c78;--orange:#ee8b2d;--bg:#f3f6fa;--ink:#17283c;--muted:#66778b;--line:#dce4ed;--white:#fff;--green:#168653;--red:#bd3e3e}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{background:var(--navy);color:white;padding:18px 16px 15px;position:sticky;top:0;z-index:3;box-shadow:0 3px 12px #10243c25}
+.brand{display:flex;justify-content:space-between;align-items:center;font-weight:800;letter-spacing:.5px}.brand small{color:#b9cee2;font-weight:600}
+main{max-width:760px;margin:auto;padding:14px 12px 90px}.card{background:white;border:1px solid var(--line);border-radius:16px;padding:15px;margin:12px 0;box-shadow:0 2px 8px #122b4510}
+h1{font-size:22px;margin:12px 0 3px}h2{font-size:17px;margin:0 0 12px}h3{font-size:14px;margin:0 0 8px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px}
+label{font-size:12px;font-weight:700;color:var(--muted);display:block;margin:9px 0 5px}
+input,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);font:inherit;font-size:15px}
+.row{display:flex;gap:9px}.row>*{flex:1;min-width:0}
+button{border:0;border-radius:11px;padding:12px 13px;font-weight:750;font-size:14px;cursor:pointer;background:#e8eef5;color:var(--navy);min-height:44px}
+button.primary{background:var(--orange);color:#fff}button.dark{background:var(--navy);color:#fff}button.green{background:var(--green);color:white}button.danger{background:#fbe9e9;color:var(--red)}button.outline{background:white;border:1px solid var(--line)}
+button:active{transform:scale(.985)}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.grid.two{grid-template-columns:repeat(2,1fr)}.grid.four{grid-template-columns:repeat(4,1fr)}
+.choice{background:#f0f4f8;border:2px solid transparent;padding:13px 6px}.choice.active{background:#fff2e5;border-color:var(--orange);color:#9b4d08}
+.small{font-size:12px;color:var(--muted)}.pill{display:inline-block;background:#e9eff6;border-radius:99px;padding:5px 9px;font-size:11px;font-weight:800;color:var(--blue)}
+.status{color:#bcebd1}.hidden{display:none!important}.topline{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.record{display:flex;align-items:center;gap:9px;padding:10px 0;border-bottom:1px solid var(--line)}.record:last-child{border:0}.pos{background:var(--navy);color:white;border-radius:9px;padding:9px;font-weight:800;min-width:42px;text-align:center}
+.record .meta{flex:1;min-width:0}.record .meta b{display:block;font-size:14px}.record .meta span{font-size:11px;color:var(--muted)}
+.statgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.stat{background:#f1f5f9;border-radius:12px;padding:12px;text-align:center}.stat strong{font-size:23px;display:block}.stat span{font-size:11px;color:var(--muted)}
+hr{border:0;border-top:1px solid var(--line);margin:13px 0}.bar{height:9px;border-radius:99px;background:#e7edf3;overflow:hidden}.bar>i{display:block;height:100%;background:var(--orange)}
+footer{position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--line);padding:9px 12px calc(9px + env(safe-area-inset-bottom));display:flex;gap:8px;justify-content:center;z-index:4}footer button{flex:1;max-width:240px}
+.notice{background:#fff7e9;border:1px solid #f6d4a8;padding:10px;border-radius:10px;font-size:12px;color:#80501d}
+@media(min-width:600px){main{padding-top:22px}.grid{gap:10px}}
+</style></head>
+<body>
+<header><div class="brand"><span>🏐 DNA VÔLEI</span><small>SCOUT <span class="status">● OFFLINE</span></small></div><h1>Scout de recepção</h1><div class="small" style="color:#c5d6e7">Registro rápido • análise individual</div></header>
+<main>
+<section class="card" id="setup">
+ <div class="topline"><h2>1. Identificação do jogo</h2><span class="pill">NOVO JOGO</span></div>
+ <div class="row"><div><label>Data</label><input id="date" type="date"></div><div><label>Local / ginásio</label><input id="venue" placeholder="Ex.: Ginásio Sirena"></div></div>
+ <label>Adversário</label><input id="opponent" placeholder="Nome da equipe adversária">
+ <label>Atletas (separe os nomes por vírgula)</label><input id="players" placeholder="Isabela, Mariana, Ana...">
+ <p class="small">Você poderá adicionar atletas depois. Os dados ficam salvos neste aparelho.</p>
+ <button class="primary" style="width:100%" onclick="startGame()">CRIAR JOGO E INICIAR SCOUT</button>
+</section>
+<section id="app" class="hidden">
+ <div class="card">
+  <div class="topline"><h2 id="gameTitle">Jogo</h2><span class="pill" id="setBadge">SET 1</span></div>
+  <div class="small" id="gameInfo"></div><hr>
+  <div class="row"><div><label>Atleta em análise</label><select id="athlete" onchange="render()"></select></div><div style="flex:0 0 125px;display:flex;align-items:end"><button class="outline" style="width:100%" onclick="substitute()">⇄ Substituir</button></div></div>
+  <div class="small" id="athleteCount"></div>
+ </div>
+ <div class="card">
+  <div class="topline"><h2>2. Novo lançamento</h2><span class="pill" id="countBadge">0 registros</span></div>
+  <h3>Posição da recepção</h3><div class="grid" id="positions"></div>
+  <h3 style="margin-top:15px">Qualidade do passe</h3><div class="grid four" id="passes"></div>
+  <h3 style="margin-top:15px">Direção do levantamento</h3><div class="grid" id="sets"></div>
+  <h3 style="margin-top:15px">Tipo de bola / resultado</h3><div class="grid two" id="balls"></div>
+  <button class="primary" style="width:100%;margin-top:15px" onclick="addRecord()">＋ LANÇAR RECEPÇÃO</button>
+  <p class="small">Após salvar, os campos são limpos. Você pode escolher qualquer posição, pular uma posição ou corrigir registros anteriores.</p>
+ </div>
+ <div class="card">
+  <div class="topline"><h2>3. Histórico deste set</h2><span class="small" id="historyCount"></span></div>
+  <div id="history"></div>
+ </div>
+ <div class="card">
+  <h2>4. Fechamento do set</h2>
+  <div class="row"><div><label>Placar DNA Vôlei</label><input id="scoreUs" type="number" min="0" inputmode="numeric" placeholder="25"></div><div><label>Placar adversário</label><input id="scoreThem" type="number" min="0" inputmode="numeric" placeholder="21"></div></div>
+  <button class="dark" style="width:100%;margin-top:10px" onclick="closeSet()">FECHAR SET E SALVAR PLACAR</button>
+  <p class="small">O histórico do set será preservado. O próximo set começa com os dados separados.</p>
+ </div>
+ <div class="card">
+  <h2>5. Encerrar partida</h2>
+  <button class="danger" style="width:100%" onclick="finishGame()">■ JOGO FINALIZADO — GERAR RELATÓRIO</button>
+ </div>
+</section>
+<section id="report" class="hidden">
+ <div class="card"><div class="topline"><h2>Relatório final</h2><span class="pill">JOGO FINALIZADO</span></div><div id="reportBody"></div><button class="primary" style="width:100%;margin-top:12px" onclick="window.print()">IMPRIMIR / SALVAR PDF</button><button class="outline" style="width:100%;margin-top:8px" onclick="exportJSON()">EXPORTAR CÓPIA DOS DADOS</button></div>
+</section>
+</main>
+<footer><button onclick="showHome()">🏐 Scout</button><button onclick="exportJSON()">⇩ Backup</button></footer>
+<script>
+const $=id=>document.getElementById(id);
+let db=null, selected={pos:'P1',pass:'A',set:'P',ball:'Rápida'};
+const POS=['P1','P2','P3','P4','P5','P6'], PASSES=['A','B','C','Quebrou'], SETS=[['P','Ponta'],['M','Meio'],['S','Saída'],['Pf','Ponta fundo'],['Sf','Saída fundo'],['2ª','De segunda']], BALLS=['Rápida','Longa','Curta','Quebrada','Errou','Pontuou'];
+function today(){return new Date().toISOString().slice(0,10)}
+function init(){ $('date').value=today(); drawChoices(); const raw=localStorage.getItem('scoutDnaGame'); if(raw){try{db=JSON.parse(raw);if(db&&!db.finished){$('setup').classList.add('hidden');$('app').classList.remove('hidden');render()}}catch(e){}}}
+function save(){localStorage.setItem('scoutDnaGame',JSON.stringify(db))}
+function drawChoices(){[['positions',POS,'pos'],['passes',PASSES,'pass'],['sets',SETS.map(x=>x[0]),'set'],['balls',BALLS,'ball']].forEach(([id,items,key])=>{$(id).innerHTML='';items.forEach(item=>{let b=document.createElement('button');b.className='choice'+(selected[key]===item?' active':'');b.textContent=item;b.onclick=()=>{selected[key]=item;drawChoices()};$(id).appendChild(b)})})}
+function startGame(){let names=$('players').value.split(',').map(x=>x.trim()).filter(Boolean);if(!names.length){alert('Cadastre pelo menos uma atleta.');return}db={date:$('date').value||today(),venue:$('venue').value,opponent:$('opponent').value,players:[...new Set(names)],active:names[0],sets:[{number:1,records:[],closed:false,scoreUs:null,scoreThem:null}],subs:[],finished:false};save();$('setup').classList.add('hidden');$('app').classList.remove('hidden');render()}
+function current(){return db.sets[db.sets.length-1]}
+function athleteRecords(name){return db.sets.flatMap(s=>s.records).filter(r=>r.athlete===name)}
+function render(){if(!db)return;$('gameTitle').textContent=db.opponent||'Jogo sem adversário';$('gameInfo').textContent=`${formatDate(db.date)} • ${db.venue||'Local não informado'}`;$('setBadge').textContent='SET '+current().number;$('athlete').innerHTML=db.players.map(p=>`<option ${p===db.active?'selected':''}>${esc(p)}</option>`).join('');$('athleteCount').textContent=`${athleteRecords(db.active).length} recepções registradas para esta atleta no jogo`;$('countBadge').textContent=current().records.length+' registros';$('historyCount').textContent=current().records.length+' lançamentos';$('history').innerHTML=current().records.length?current().records.slice().reverse().map(r=>`<div class="record"><div class="pos">${r.pos}</div><div class="meta"><b>${esc(r.athlete)} • Passe ${esc(r.pass)}</b><span>Lev. ${esc(r.set)} • ${esc(r.ball)} • ${r.time}</span></div><button class="outline" onclick="editRecord('${r.id}')">✎</button><button class="danger" onclick="deleteRecord('${r.id}')">×</button></div>`).join(''):'<p class="small">Nenhum lançamento neste set ainda.</p>';drawChoices()}
+function addRecord(){if(current().closed){alert('Este set já foi fechado.');return}let r={id:crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random()),athlete:db.active,pos:selected.pos,pass:selected.pass,set:selected.set,ball:selected.ball,time:new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})};current().records.push(r);save();selected={pos:'P1',pass:'A',set:'P',ball:'Rápida'};render()}
+function editRecord(id){let r=current().records.find(x=>x.id===id);if(!r)return;let pos=prompt('Posição (P1 a P6):',r.pos);if(pos===null)return;pos=pos.toUpperCase();if(!POS.includes(pos)){alert('Posição inválida.');return}let pass=prompt('Passe (A, B, C ou Quebrou):',r.pass);if(pass===null)return;if(!PASSES.includes(pass)){alert('Passe inválido.');return}let set=prompt('Levantamento (P, M, S, Pf, Sf ou 2ª):',r.set);if(set===null)return;if(!SETS.map(x=>x[0]).includes(set)){alert('Levantamento inválido.');return}let ball=prompt('Tipo de bola / resultado:',r.ball);if(ball===null)return;if(!BALLS.includes(ball)){alert('Resultado inválido.');return}r.pos=pos;r.pass=pass;r.set=set;r.ball=ball;save();render()}
+function deleteRecord(id){if(!confirm('Excluir este lançamento?'))return;current().records=current().records.filter(r=>r.id!==id);save();render()}
+function substitute(){let old=db.active;let name=prompt('Qual atleta está entrando no lugar de '+old+'?');if(!name||!name.trim())return;name=name.trim();if(!db.players.includes(name))db.players.push(name);db.subs.push({set:current().number,from:old,to:name,at:new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})});db.active=name;save();render()}
+function closeSet(){if(current().closed)return alert('Set já fechado.');let a=$('scoreUs').value,b=$('scoreThem').value;if(a===''||b==='')return alert('Informe os dois placares.');current().scoreUs=+a;current().scoreThem=+b;current().closed=true;save();if(confirm('Set salvo! Deseja abrir o próximo set?')){db.sets.push({number:db.sets.length+1,records:[],closed:false,scoreUs:null,scoreThem:null});$('scoreUs').value='';$('scoreThem').value='';save();render()}else render()}
+function summary(name){let rs=athleteRecords(name),n=rs.length,counts={A:0,B:0,C:0,Quebrou:0};rs.forEach(r=>counts[r.pass]++);let positive=counts.A+counts.B;let errors=counts.Quebrou;return {n,counts,positive,errors,rate:n?positive/n*100:0,rs}}
+function finishGame(){if(!confirm('Finalizar o jogo? Os sets e lançamentos serão preservados e o relatório será gerado.'))return;db.finished=true;save();$('app').classList.add('hidden');$('report').classList.remove('hidden');buildReport()}
+function buildReport(){let out=`<p><b>${esc(db.opponent||'Adversário não informado')}</b><br>${formatDate(db.date)} • ${esc(db.venue||'Local não informado')}</p><h3>Placar por set</h3>`;out+=db.sets.map(s=>`<p>Set ${s.number}: ${s.scoreUs??'—'} × ${s.scoreThem??'—'} ${s.closed?'':'(não fechado)'}</p>`).join('');out+='<hr><h3>Desempenho por atleta</h3>';db.players.forEach(name=>{let s=summary(name);out+=`<div class="card"><b>${esc(name)}</b><div class="statgrid"><div class="stat"><strong>${s.n}</strong><span>Recepções</span></div><div class="stat"><strong>${s.positive}</strong><span>Passe A + B</span></div><div class="stat"><strong>${s.errors}</strong><span>Quebrou</span></div></div><p class="small">A: ${s.counts.A} • B: ${s.counts.B} • C: ${s.counts.C} • Quebrou: ${s.counts.Quebrou}</p><b>Aproveitamento A+B: ${s.rate.toFixed(1)}%</b><div class="bar"><i style="width:${s.rate}%"></i></div></div>`});out+='<hr><h3>Substituições</h3>'+(db.subs.length?db.subs.map(x=>`<p>Set ${x.set}, ${x.at}: ${esc(x.from)} → ${esc(x.to)}</p>`).join(''):'<p>Nenhuma substituição registrada.</p>');out+='<div class="notice">Os indicadores acima contam apenas lançamentos observados. Posições sem registro não são convertidas em recepções reais nem entram no cálculo de acertos e erros. A média pode ser apresentada separadamente em uma evolução futura.</div>';$('reportBody').innerHTML=out}
+function exportJSON(){if(!db)return alert('Nenhum jogo para exportar.');let blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='scout-dna-volei-backup.json';a.click();URL.revokeObjectURL(a.href)}
+function showHome(){if(db&&db.finished){$('report').classList.remove('hidden');$('app').classList.add('hidden')}else if(db){$('app').classList.remove('hidden');$('setup').classList.add('hidden');$('report').classList.add('hidden')}else{$('setup').classList.remove('hidden')}}
+function formatDate(d){if(!d)return'';let [y,m,day]=d.split('-');return `${day}/${m}/${y}`}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+if('serviceWorker' in navigator)window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));
+init();
+</script></body></html>
